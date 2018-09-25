@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 
 migraine_data = 
-  readxl::read_excel('~/Desktop/FALL 2018/Biostat I/Homework/HW2/Migraine.xlsx') %>%
+  readxl::read_excel('~/Migraine.xlsx') %>%
   janitor::clean_names() %>%  # brings colnames to lowercase, no white space
   mutate(migraine = recode(migraine, `0` = 'no', `1` = 'yes'))
 head(migraine_data)
