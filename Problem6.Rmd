@@ -1,0 +1,78 @@
+---
+title: "Biostat HW2 Prob 6"
+author: "Alyssa Vanderbeek"
+date: "9/25/2018"
+output: pdf_document
+---
+
+## Problem 6
+A researcher is conducting a study to examine associations of depression and cognitive performance with migraine symptoms. Use data from the Human Epilepsy Project (HEP) to answer the following questions.
+
+Migraine status 0-no, 1-yes
+NDDIE: Neurological Disorder Depression Inventory for Epilepsy
+CESD: Center for Epidemiologic Studies Depression Scale
+Cognitive evaluation: Aldenkamp-Baker
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+migraine_data = 
+  readxl::read_excel('~/Desktop/FALL 2018/Biostat I/Homework/HW2/Migraine.xlsx') %>%
+  janitor::clean_names() %>%  # brings colnames to lowercase, no white space
+  mutate(migraine = recode(migraine, `0` = 'no', `1` = 'yes'))
+head(migraine_data)
+```
+
+
+(a) Summarize the three variables above for epilepsy patients with and without migraine. Carefully choose the descriptive statistics and report both measures of location/spread, sample sizes (N) and number of missing values for each variable.
+For NDDIE and CSED, use the original scores and the following cutoffs: NDDIE (cutoff of 16), CSED (cutoff of 16). 
+
+# ```{r func}
+# desc = function(d){
+#   mean = mean(d, na.rm = T)
+#   min = min(d, na.rm = T)
+#   max = max(d, na.rm = T)
+#   median = median(d, na.rm = T)
+#   
+#   return(tibble(measure = c('min', 'max', 'mean', 'median'),
+#                 value = c(min, max, mean, median))
+#   )
+# }
+# ```
+
+## CESD summary
+```{r}
+migraine_data %>%
+  group_by(migraine) %>%
+  summarise(n_cesd = table(migraine),  
+            avg_cesd = mean(cesd, na.rm = T),  
+            quartile_25 = quantile(cesd, na.rm = T)[2],
+            median = median(cesd, na.rm = T),
+            quartile_75 = quantile(cesd, na.rm = T)[4],
+            sd = sd(cesd, na.rm = T))
+```
+
+## NDDIE summary
+```{r}
+migraine_data %>%
+  group_by(migraine) %>%
+  summarise(n_nddie = table(migraine),  # number of subjects per group
+            avg_cesd = mean(nddie, na.rm = T),  # mean CESD
+            quartile_25 = quantile(nddie, na.rm = T)[2],
+            median = median(nddie, na.rm = T),
+            quartile_75 = quantile(nddie, na.rm = T)[4],
+            sd = sd(nddie, na.rm = T))
+```
+
+
+```{r}
+migraine_recode = 
+  migraine_data %>% 
+  mutate(cesd_geq16 = ifelse(cesd >= 16, 'yes', 'no'),
+         nddie_geq16 = ifelse(nddie >= 16, 'yes', 'no'))
+```
+
+Create graphical displays to show the scores distributions for NDDIE, CSED, ABNAS (memory and language) by group (migraine vs no-migraine). Please add your recommendations / comments. (5p)
+
