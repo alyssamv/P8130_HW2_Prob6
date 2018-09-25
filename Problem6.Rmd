@@ -18,13 +18,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 
-migraine_data = 
-  readxl::read_excel('~/Migraine.xlsx') %>%
+migraine_data = migraine_data %>%
   janitor::clean_names() %>%  # brings colnames to lowercase, no white space
   mutate(migraine = recode(migraine, `0` = 'no', `1` = 'yes'))
 head(migraine_data)
 ```
 
+```{r}
+migraine_recode = 
+  migraine_data %>% 
+  mutate(cesd_geq16 = ifelse(cesd >= 16, 'yes', 'no'),
+         nddie_geq16 = ifelse(nddie >= 16, 'yes', 'no'))
+```
 
 (a) Summarize the three variables above for epilepsy patients with and without migraine. Carefully choose the descriptive statistics and report both measures of location/spread, sample sizes (N) and number of missing values for each variable.
 For NDDIE and CSED, use the original scores and the following cutoffs: NDDIE (cutoff of 16), CSED (cutoff of 16). 
@@ -55,12 +60,32 @@ migraine_data %>%
 ```
 
 
+## summary with binary variable
 ```{r}
-migraine_recode = 
-  migraine_data %>% 
-  mutate(cesd_geq16 = ifelse(cesd >= 16, 'yes', 'no'),
-         nddie_geq16 = ifelse(nddie >= 16, 'yes', 'no'))
+migraine_recode %>%
+  mutate(cesd_binary = recode(cesd_geq16, 'yes' = 1, 'no' = 0)) %>%
+  group_by(migraine) %>%
+  summarise(sum(cesd_binary, na.rm = T))
+
+prop.table(table(Migraine = migraine_recode$migraine, 
+      'CESD >= 16' = migraine_recode$cesd_geq16), margin = 1)
+table(Migraine = migraine_recode$migraine, 
+      'NNDIE >= 16' = migraine_recode$nddie_geq16)
 ```
+
+## NDDIE summary
+```{r}
+migraine_data %>%
+  group_by(migraine) %>%
+  summarise(n_nddie = table(migraine),  # number of subjects per group
+            avg_cesd = mean(nddie, na.rm = T),  # mean CESD
+            quartile_25 = quantile(nddie, na.rm = T)[2],
+            median = median(nddie, na.rm = T),
+            quartile_75 = quantile(nddie, na.rm = T)[4],
+            sd = sd(nddie, na.rm = T))
+```
+
+
 
 Create graphical displays to show the scores distributions for NDDIE, CSED, ABNAS (memory and language) by group (migraine vs no-migraine). Please add your recommendations / comments. (5p)
 
