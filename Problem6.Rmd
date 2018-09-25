@@ -29,18 +29,6 @@ head(migraine_data)
 (a) Summarize the three variables above for epilepsy patients with and without migraine. Carefully choose the descriptive statistics and report both measures of location/spread, sample sizes (N) and number of missing values for each variable.
 For NDDIE and CSED, use the original scores and the following cutoffs: NDDIE (cutoff of 16), CSED (cutoff of 16). 
 
-# ```{r func}
-# desc = function(d){
-#   mean = mean(d, na.rm = T)
-#   min = min(d, na.rm = T)
-#   max = max(d, na.rm = T)
-#   median = median(d, na.rm = T)
-#   
-#   return(tibble(measure = c('min', 'max', 'mean', 'median'),
-#                 value = c(min, max, mean, median))
-#   )
-# }
-# ```
 
 ## CESD summary
 ```{r}
