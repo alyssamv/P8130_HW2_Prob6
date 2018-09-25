@@ -17,8 +17,9 @@ Cognitive evaluation: Aldenkamp-Baker
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+load("~/Desktop/FALL 2018/Biostat I/Homework/Write ups/P8130_HW2_Prob6/migraine.RData")
 
-migraine_data = migraine_data %>%
+migraine_data = migraine %>%
   janitor::clean_names() %>%  # brings colnames to lowercase, no white space
   mutate(migraine = recode(migraine, `0` = 'no', `1` = 'yes'))
 head(migraine_data)
