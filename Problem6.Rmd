@@ -22,7 +22,7 @@ load("~/Desktop/FALL 2018/Biostat I/Homework/Write ups/P8130_HW2_Prob6/migraine.
 
 migraine_data = migraine %>%
   janitor::clean_names() %>%  # brings colnames to lowercase, no white space
-  mutate(migraine = recode(migraine, `0` = 'no', `1` = 'yes')) %>% 
+  mutate(migraine = recode(migraine, `0` = 'No', `1` = 'Yes')) %>% 
   mutate(cesd_geq16 = ifelse(cesd >= 16, 'yes', 'no'),
          nddie_geq16 = ifelse(nddie >= 16, 'yes', 'no'))
 
@@ -40,7 +40,7 @@ Modes <- function(x) {
 
 ### (a) Summarize the three variables above for epilepsy patients with and without migraine. Carefully choose the descriptive statistics and report both measures of location/spread, sample sizes (N) and number of missing values for each variable. For NDDIE and CSED, use the original scores and the following cutoffs: NDDIE (cutoff of 16), CSED (cutoff of 16). 
 
-There are data for 419 subjects in the data provided. Below are point and spread summaries for each of the variables given (CESD, NDDIE, and ABNAS scores for language and memory). First, for CESD scores, note that the range of possible values is (`r range(migraine_data$cesd, na.rm = T)`). 
+There are data for 419 subjects in the data provided. Below are point and spread summaries for each of the variables given (CESD, NDDIE, and ABNAS scores for language and memory). First, for CESD scores, note that the range of possible integer values is (`r range(migraine_data$cesd, na.rm = T)`). 
 
 ```{r, echo = FALSE}
 migraine_data %>%
@@ -60,7 +60,7 @@ migraine_data %>%
 ```
 
 
-For the NDDIE score, the range of possible values is (`r range(migraine_data$nddie, na.rm = T)`).
+For the NDDIE score, the range of possible integer values is (`r range(migraine_data$nddie, na.rm = T)`).
 
 ```{r, echo = FALSE}
 migraine_data %>%
@@ -123,8 +123,37 @@ bind_rows(language, memory) %>%
 
 
 
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 ggplot(migraine_data, aes(x = migraine, y = cesd)) +
-  geom_boxplot(aes(fill = migraine)) 
+  geom_boxplot(aes(fill = migraine)) +
+  ggtitle(label = 'Distribution of CESD scores among patients with and without migraine') +
+  ylab('CESD score (0-48)') +
+  xlab('') +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+ggplot(migraine_data, aes(x = migraine, y = nddie)) +
+  geom_boxplot(aes(fill = migraine)) +
+  ggtitle(label = 'Distribution of NDDIE scores among patients with and without migraine') +
+  ylab('CESD score (6-24)') +
+  xlab('') +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+ggplot(migraine_data, aes(x = migraine, y = abnas_memory)) +
+  geom_boxplot(aes(fill = migraine)) +
+  ggtitle(label = 'Distribution of ABNAS Memory scores among patients with and without migraine') +
+  ylab('ABNAS memory score (0-12)') +
+  xlab('') +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+ggplot(migraine_data, aes(x = migraine, y = abnas_language)) +
+  geom_boxplot(aes(fill = migraine)) +
+  ggtitle(label = 'Distribution of ABNAS Language scores among patients with and without migraine') +
+  ylab('ABNAS language score (0-9)') +
+  xlab('') +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 ```
 
