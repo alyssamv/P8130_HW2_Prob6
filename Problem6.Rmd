@@ -29,25 +29,33 @@ migraine_data = migraine %>%
 rm(migraine)
 ```
 
+```{r, echo=FALSE}
+## Function to get the mode(s) of a given variables (column)
+Modes <- function(x) {
+  t = which(table(x) == max(table(x)))
+  return(paste(names(t), collapse = ','))
+}
+```
+
 
 ### (a) Summarize the three variables above for epilepsy patients with and without migraine. Carefully choose the descriptive statistics and report both measures of location/spread, sample sizes (N) and number of missing values for each variable. For NDDIE and CSED, use the original scores and the following cutoffs: NDDIE (cutoff of 16), CSED (cutoff of 16). 
 
-
-Below are point and spread summaries for each of the three variables given. First, for CESD scores, note that the range of possible values is (`r range(migraine_data$cesd, na.rm = T)`).
+There are data for 419 subjects in the data provided. Below are point and spread summaries for each of the variables given (CESD, NDDIE, and ABNAS scores for language and memory). First, for CESD scores, note that the range of possible values is (`r range(migraine_data$cesd, na.rm = T)`). 
 
 ```{r, echo = FALSE}
 migraine_data %>%
   mutate(cesd_binary = recode(cesd_geq16, 'yes' = 1, 'no' = 0)) %>%
   group_by(migraine) %>%
-  summarise('Measure' = 'CESD',
-            'N' = table(migraine) - summary(cesd)[7],  
+  summarise(#'Measure' = 'CESD',
+            'N' = table(migraine) - sum(is.na(cesd)),  
             'Mean' = mean(cesd, na.rm = T),  
+            'Mode' = Modes(cesd),
             '25th %' = quantile(cesd, na.rm = T)[2],
             'Median' = median(cesd, na.rm = T),
             '75th %' = quantile(cesd, na.rm = T)[4],
             'Std Dev' = sd(cesd, na.rm = T),
             'CESD >= 16' = sum(cesd_binary, na.rm = T)/table(migraine),
-            'NAs' = summary(cesd)[7]) %>%
+            'NAs' = sum(is.na(cesd))) %>%
   knitr::kable()
 ```
 
@@ -58,48 +66,53 @@ For the NDDIE score, the range of possible values is (`r range(migraine_data$ndd
 migraine_data %>%
   mutate(nddie_binary = recode(nddie_geq16, 'yes' = 1, 'no' = 0)) %>%
   group_by(migraine) %>%
-  summarise('Measure' = 'NDDIE',
-            'N' = table(migraine) - summary(nddie)[7],  # number of subjects per group
-            'Mean' = mean(nddie, na.rm = T),  # mean CESD
+  summarise(#'Measure' = 'NDDIE',
+            'N' = table(migraine) - sum(is.na(nddie)),  # number of subjects per group
+            'Mean' = mean(nddie, na.rm = T),  # mean CESD  
+            'Mode' = Modes(nddie),
             '25th %' = quantile(nddie, na.rm = T)[2],
             'Median' = median(nddie, na.rm = T),
             '75th %' = quantile(nddie, na.rm = T)[4],
             'Std Dev' = sd(nddie, na.rm = T),
             'NDDIE >= 16' = sum(nddie_binary, na.rm = T)/table(migraine),
-            'NAs' = summary(nddie)[7]) %>%
+            'NAs' = sum(is.na(nddie))) %>%
   knitr::kable()
 ```
 
-For the ABNAS scores, we have the following descriptive statistics:
+ABNAS scoring is broken down into two categories: language - range (`r  range(migraine_data$abnas_language, na.rm = T)`) - and memory - range (`r range(migraine_data$abnas_memory, na.rm = T)`). 
 
 ```{r, echo = FALSE}
+
 language = 
   migraine_data %>%
   group_by(migraine) %>%
   summarise('Measure' = 'Language',
             'N' = table(migraine),  
             'Mean' = mean(abnas_language, na.rm = T),  
+            'Mode' = Modes(abnas_language), 
             '25th %' = quantile(abnas_language, na.rm = T)[2],
             'Median' = median(abnas_language, na.rm = T),
             '75th %' = quantile(abnas_language, na.rm = T)[4],
             'Max' = max(abnas_language, na.rm = T),
             'Std Dev' = sd(abnas_language, na.rm = T),
-            'NAs' = summary(abnas_language)[7]) 
+            'NAs' = sum(is.na(abnas_language))) 
 
 memory = 
   migraine_data %>%
   group_by(migraine) %>%
   summarise('Measure' = 'Memory',
             'N' = table(migraine),  
-            'Mean' = mean(abnas_memory, na.rm = T),  
+            'Mean' = mean(abnas_memory, na.rm = T),   
+            'Mode' = Modes(abnas_memory),
             '25th %' = quantile(abnas_memory, na.rm = T)[2],
             'Median' = median(abnas_memory, na.rm = T),
             '75th %' = quantile(abnas_memory, na.rm = T)[4],
             'Max' = max(abnas_memory, na.rm = T),
             'Std Dev' = sd(abnas_memory, na.rm = T),
-            'NAs' = summary(abnas_memory)[7]) 
+            'NAs' = sum(is.na(abnas_memory))) 
 
 bind_rows(language, memory) %>%
+#  arrange(migraine) %>%
   knitr::kable()
 ```
 
@@ -107,4 +120,11 @@ bind_rows(language, memory) %>%
 
 
 ### (b) Create graphical displays to show the scores distributions for NDDIE, CSED, ABNAS (memory and language) by group (migraine vs no-migraine). Please add your recommendations / comments. (5p)
+
+
+
+```{r}
+ggplot(migraine_data, aes(x = migraine, y = cesd)) +
+  geom_boxplot(aes(fill = migraine)) 
+```
 
