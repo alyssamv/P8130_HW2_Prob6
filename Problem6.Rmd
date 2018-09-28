@@ -1,7 +1,4 @@
 ---
-title: "Biostat HW2 Prob 6"
-author: "Alyssa Vanderbeek"
-date: "28 September 2018"
 output: pdf_document
 ---
 
@@ -56,7 +53,7 @@ migraine_data %>%
             'Std Dev' = sd(cesd, na.rm = T),
             'CESD >= 16' = sum(cesd_binary, na.rm = T)/table(migraine),
             'NAs' = sum(is.na(cesd))) %>%
-  knitr::kable()
+  knitr::kable(caption = 'Summary statistics for CESD score by migraine status')
 ```
 
 
@@ -76,7 +73,7 @@ migraine_data %>%
             'Std Dev' = sd(nddie, na.rm = T),
             'NDDIE >= 16' = sum(nddie_binary, na.rm = T)/table(migraine),
             'NAs' = sum(is.na(nddie))) %>%
-  knitr::kable()
+  knitr::kable(caption = 'Summary statistics for NDDIE score by migraine status')
 ```
 
 ABNAS scoring is broken down into two categories: language - range (`r  range(migraine_data$abnas_language, na.rm = T)`) - and memory - range (`r range(migraine_data$abnas_memory, na.rm = T)`). 
@@ -113,7 +110,7 @@ memory =
 
 bind_rows(language, memory) %>%
 #  arrange(migraine) %>%
-  knitr::kable()
+  knitr::kable(caption = 'Summary statistics for ABNAS language and memory scores by migraine status')
 ```
 
 
@@ -126,7 +123,7 @@ bind_rows(language, memory) %>%
 ```{r, echo=FALSE, warning=FALSE}
 ggplot(migraine_data, aes(x = migraine, y = cesd)) +
   geom_boxplot(aes(fill = migraine)) +
-  ggtitle(label = 'Distribution of CESD scores among patients with and without migraine') +
+  ggtitle(label = 'Distribution of CESD scores among patients') +
   ylab('CESD score (0-48)') +
   xlab('') +
   theme(axis.text.x = element_blank(),
@@ -134,7 +131,7 @@ ggplot(migraine_data, aes(x = migraine, y = cesd)) +
 
 ggplot(migraine_data, aes(x = migraine, y = nddie)) +
   geom_boxplot(aes(fill = migraine)) +
-  ggtitle(label = 'Distribution of NDDIE scores among patients with and without migraine') +
+  ggtitle(label = 'Distribution of NDDIE scores among patients') +
   ylab('CESD score (6-24)') +
   xlab('') +
   theme(axis.text.x = element_blank(),
@@ -142,7 +139,7 @@ ggplot(migraine_data, aes(x = migraine, y = nddie)) +
 
 ggplot(migraine_data, aes(x = migraine, y = abnas_memory)) +
   geom_boxplot(aes(fill = migraine)) +
-  ggtitle(label = 'Distribution of ABNAS Memory scores among patients with and without migraine') +
+  ggtitle(label = 'Distribution of ABNAS Memory scores among patients') +
   ylab('ABNAS memory score (0-12)') +
   xlab('') +
   theme(axis.text.x = element_blank(),
@@ -150,7 +147,7 @@ ggplot(migraine_data, aes(x = migraine, y = abnas_memory)) +
 
 ggplot(migraine_data, aes(x = migraine, y = abnas_language)) +
   geom_boxplot(aes(fill = migraine)) +
-  ggtitle(label = 'Distribution of ABNAS Language scores among patients with and without migraine') +
+  ggtitle(label = 'Distribution of ABNAS Language scores among patients') +
   ylab('ABNAS language score (0-9)') +
   xlab('') +
   theme(axis.text.x = element_blank(),
